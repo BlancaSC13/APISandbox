@@ -228,5 +228,13 @@ namespace APISandbox__Blanca_Segura.Controllers
 
             return Ok(result);
         }
+        [Route("[action]")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Student>>> GetAllStudentsView()
+        {
+            var allStudents = await _context.GetAllStudentsViews.ToListAsync();
+
+            return Ok(allStudents);
+        }
     }
 }

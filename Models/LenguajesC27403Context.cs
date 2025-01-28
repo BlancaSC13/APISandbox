@@ -8,12 +8,21 @@ public partial class LenguajesC27403Context : DbContext
 {
     private readonly IConfiguration _configuration;
 
-    public LenguajesC27403Context(IConfiguration configuration = null)
+
+    public LenguajesC27403Context(IConfiguration configuration)
     {
         _configuration = configuration;
-    }     
+    }
+
+    protected LenguajesC27403Context()
+    {
+    }
 
     public virtual DbSet<Contact> Contacts { get; set; }
+
+    public virtual DbSet<Course> Courses { get; set; }
+
+    public virtual DbSet<GetAllStudentsView> GetAllStudentsViews { get; set; }
 
     public virtual DbSet<Nationality> Nationalities { get; set; }
 
@@ -30,6 +39,32 @@ public partial class LenguajesC27403Context : DbContext
 
             entity.Property(e => e.Email).HasMaxLength(30);
             entity.Property(e => e.Name).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<Course>(entity =>
+        {
+            entity.ToTable("Course");
+
+            entity.Property(e => e.Code).HasMaxLength(10);
+            entity.Property(e => e.Description).HasMaxLength(100);
+            entity.Property(e => e.Name)
+                .HasMaxLength(30)
+                .IsFixedLength();
+        });
+
+        modelBuilder.Entity<GetAllStudentsView>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("GetAllStudentsView");
+
+            entity.Property(e => e.Email).HasMaxLength(30);
+            entity.Property(e => e.Name).HasMaxLength(30);
+            entity.Property(e => e.NationalityId).HasColumnName("Nationality_Id");
+            entity.Property(e => e.NationalityName)
+                .HasMaxLength(30)
+                .IsFixedLength();
+            entity.Property(e => e.Password).HasMaxLength(30);
         });
 
         modelBuilder.Entity<Nationality>(entity =>
