@@ -105,15 +105,26 @@ namespace APISandbox__Blanca_Segura.Controllers
         [Route("[action]")]
         public async Task<ActionResult<Student>> PostStudent(Student student)
         {
-            var studentModify = new Student()
+
+            if (student.Nationality != null)
             {
-                Id = student.Id,
-                Name = student.Name,
-                Email = student.Email,
-                Password = student.Password,
-                NationalityId = student.Nationality.Id
-            };
-            _context.Students.Add(student);
+                var studentToModify = new Student()
+                {
+
+                    Id = student.Id,
+                    Name = student.Name,
+                    Email = student.Email,
+                    Password = student.Password,
+                    NationalityId = student.Nationality.Id
+
+                };
+                _context.Students.Add(studentToModify);
+            }
+            else
+            {
+                _context.Students.Add(student);
+            }
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetStudent", new { id = student.Id }, student);
@@ -141,6 +152,29 @@ namespace APISandbox__Blanca_Segura.Controllers
             return _context.Students.Any(e => e.Id == id);
         }
 
+
+
+        // GET: api/Student/GetByName
+        [HttpGet]
+        [Route("[action]/{name}")]
+        public async Task<ActionResult<IEnumerable<Student>>> GetStudentByName(string name)
+        {
+            return await _context.Students
+                             .Where(s => s.Name.Contains(name)) 
+                             .Include(s => s.Nationality)  // Incluir la nacionalidad
+                             .Select(s => new Student
+                             {
+                                 Id = s.Id,
+                                 Name = s.Name,
+                                 Email = s.Email,
+                                 Nationality = s.Nationality
+                             })
+                             .ToListAsync();
+
+            //return await _context.Students.ToListAsync();
+        }
+
+        // GET: api/Student/GetStudent
 
 
 
