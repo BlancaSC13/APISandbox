@@ -105,19 +105,31 @@ namespace APISandbox__Blanca_Segura.Controllers
         [Route("[action]")]
         public async Task<ActionResult<Student>> PostStudent(Student student)
         {
-            var studentModify = new Student()
+
+            if (student.Nationality != null)
             {
-                Id = student.Id,
-                Name = student.Name,
-                Email = student.Email,
-                Password = student.Password,
-                NationalityId = student.Nationality.Id
-            };
-            _context.Students.Add(student);
+                var studentToModify = new Student()
+                {
+
+                    Id = student.Id,
+                    Name = student.Name,
+                    Email = student.Email,
+                    Password = student.Password,
+                    NationalityId = student.Nationality.Id
+
+                };
+                _context.Students.Add(studentToModify);
+            }
+            else
+            {
+                _context.Students.Add(student);
+            }
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetStudent", new { id = student.Id }, student);
         }
+
 
         // DELETE: api/Student/5
         [HttpDelete]
